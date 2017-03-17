@@ -1,0 +1,233 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage[T1]{fontenc}
+
+\usepackage[tracking]{microtype}
+
+\usepackage[sc,osf]{mathpazo}   % With old-style figures and real smallcaps.
+\linespread{1.025}              % Palatino leads a little more leading
+
+% Euler for math and numbers
+% \usepackage[euler-digits,small]{eulervm}
+\usepackage{eulervm}
+\end_preamble
+\use_default_options false
+\begin_modules
+theorems-ams-bytype
+theorems-ams-extended-bytype
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding utf8
+\fontencoding default
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 3cm
+\rightmargin 2.5cm
+\bottommargin 3cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Weighted mean standard error
+\end_layout
+
+\begin_layout Standard
+This is the derivation for the sbp function standard error bars.
+ It's hacky but will fix later.
+\end_layout
+
+\begin_layout Standard
+Weighted frequency bin formula is:
+\begin_inset Formula 
+\[
+\hat{Q}=\frac{\sum w_{i}d_{i}}{\sum w_{i}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $i$
+\end_inset
+
+ is identity, 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ is weight, 
+\begin_inset Formula $d_{i}$
+\end_inset
+
+ is dummy for group membership.
+ Ignoring the denominator, we have 
+\begin_inset Formula 
+\[
+Var\left(w_{i}d_{i}\right)=Var\left(w_{i}d_{i}\mid d_{i}\right)+Var\left(E\left(w_{i}d_{i}\mid d_{i}\right)\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+=qVar\left(w_{i}\right)+\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}q\left(1-q\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where, 
+\begin_inset Formula $q=P\left(d_{i}=1\right)$
+\end_inset
+
+.
+ Note 
+\begin_inset Formula $Var\left(E\left(w_{i}d_{i}\mid d_{i}\right)\right)=Var\left(d_{i}E\left(w_{i}\mid d_{i}\right)\right)=q\left(1-q\right)\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}$
+\end_inset
+
+.
+ Hence,
+\begin_inset Formula 
+\[
+Var\left(\hat{Q}\right)=Var\left(\frac{\sum w_{i}d_{i}}{\sum w_{i}}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+=\frac{\sum_{i}\left[qVar\left(w_{i}\mid d_{i}\right)+\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}q\left(1-q\right)\right]}{\left[\sum w_{i}\right]^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+=q\frac{\sum_{i}Var\left(w_{i}\mid d_{i}\right)}{\left[\sum w_{i}\right]^{2}}+\frac{\sum_{i}\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}q\left(1-q\right)}{\left[\sum w_{i}\right]^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For the right term, 
+\begin_inset Formula 
+\[
+\frac{\sum_{i}\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}}{\left[\sum w_{i}\right]^{2}}\approx\frac{n\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}}{n^{2}\left(E\left(w_{i}\right)\right)^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For the left term, 
+\begin_inset Formula 
+\[
+\frac{\sum_{i}Var\left(w_{i}\mid d_{i}\right)}{\left[\sum w_{i}\right]^{2}}\approx\frac{nVar\left(w_{i}\mid d_{i}\right)}{n^{2}\left(E\left(w_{i}\right)\right)^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And the left term we can calculate pretty easily.
+ So finally, we have: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+=\frac{q}{n}\frac{\sum_{i}Var\left(w_{i}\mid d_{i}\right)}{\left[\sum w_{i}\right]^{2}}+\frac{\left(E\left(w_{i}\mid d_{i}\right)\right)^{2}}{\left(E\left(w_{i}\right)\right)^{2}}\frac{q\left(1-q\right)}{n}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I have no great interpretation for what this is doing, but it seems it'll
+ work...
+\end_layout
+
+\end_body
+\end_document
