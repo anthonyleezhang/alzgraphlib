@@ -17,22 +17,56 @@ slp = function(plotdata, xname = "x", yname = "y", sname = "Series", yzero = 0) 
 # plotdata = data.table(x = 1:10, y = 21:30, Series = factor(floor(1:10/5)))
 # slp(plotdata, yzero = 1)
 
-sdp = function(plotdata, xname = "x", sname = "Series", wname = "") {
+skp = function(plotdata, xname = "x", yname = "y", yzero = 0) {
+  plot = ggplot(plotdata, aes(x = get(xname), y = get(yname))) + 
+    geom_point() +
+    geom_smooth(size = 1.3) + 
+    scale_x_continuous(name = xname) +
+    theme(text = element_text(size = 40))
   
-  if(wname == "") {
-    plot = ggplot(plotdata, aes(x = get(xname), group = factor(get(sname)), color = factor(get(sname))))
+  if(yzero == 1) {
+    plot = plot + scale_y_continuous(name = yname, limits = c(0, plotdata[, max(y)]))
+  } else {
+    plot = plot + scale_y_continuous(name = yname)
   }
   
-  if(wname != "") {
-    plotdata[!is.na(get(xname)), temp_weights := get(wname) / sum(get(wname), na.rm = TRUE), by = get(sname)]
-    plot = ggplot(plotdata, aes(x = get(xname), group = factor(get(sname)), color = factor(get(sname)), weights = temp_weights))
+  return(plot)
+}
+
+# plotdata = data.table(x = 1:1000/100)
+# plotdata[, y := x + rnorm(.N)]
+# skp(plotdata, yzero = 0)
+
+sdp = function(plotdata, xname = "x", colname = "", ltyname = "", wname = "", factor_color = TRUE) {
+  
+  if(colname == "") {plotdata[, temp_colvar := 1]}
+  if(colname != "") {plotdata[, temp_colvar := get(colname)]}
+  
+  if(ltyname == "") {plotdata[, temp_ltyvar := 1]}
+  if(ltyname != "") {plotdata[, temp_ltyvar := get(ltyname)]}
+  
+  if(wname == "") {plotdata[, temp_weights := 1/.N, by = .(temp_colvar, temp_ltyvar)]}
+  if(wname != "") {plotdata[, temp_weights := get(wname) / sum(get(wname), na.rm = TRUE), 
+                            by = .(temp_colvar, temp_ltyvar)]}
+  
+  if(factor_color == TRUE) {
+    plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
+                                color = factor(temp_colvar), lty = factor(temp_ltyvar)))
+    
+    plot = plot + scale_color_discrete(name = colname)
+  }
+  
+  if(factor_color == FALSE) {
+    plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
+                                color = temp_colvar, lty = factor(temp_ltyvar)))
+    plot = plot + scale_color_gradient(low = "blue1", high = "darkorange1")
   }
   
   plot = plot + 
     geom_line(stat = "density", size = 1.3, alpha = 0.7) + 
     scale_x_continuous(name = xname) +
     scale_y_continuous(name = "Density") +
-    scale_color_discrete(name = sname) +
+    scale_linetype_discrete(name = ltyname) +
     theme(text = element_text(size = 40))
   
   return(plot)
@@ -89,54 +123,64 @@ sbp = function(input_data, xname = "x", sname = "Series", wname = "") {
 # ))
 # sdp(plotdata)
 
-datatopn = function(data, yvar, byvar = "", meanvar = "", weightvar = "", sumvar = "", topn = 5) {
+dbg = function(data, yvar, byvar = "", meanvars = character(0), weightvar = "", topn = 5) {
   
-  if(sumvar != "") {data[, temp_sumvar := get(sumvar)]}
-  if(sumvar == "") {data[, temp_sumvar := 1]}
+  data[, temp_yvar := get(yvar)]
   
   if(weightvar != "") {data[, temp_weightvar := get(weightvar)]}
   if(weightvar == "") {data[, temp_weightvar := 1]}
   
-  if(meanvar != "") {data[, temp_meanvar := get(meanvar)]}
-  if(meanvar == "") {data[, temp_meanvar := 1]}
-  
   if(byvar != "") {data[, temp_byvar := get(byvar)]}
   if(byvar == "") {data[, temp_byvar := 1]}
   
-  temp = data[, .(weight = sum(temp_sumvar), 
-                  temp_meanvar = sum(temp_weightvar * temp_meanvar, na.rm = TRUE) / 
-                    sum(temp_weightvar, na.rm = TRUE)), 
-              by = .(temp_byvar, get(yvar))]
+  data[, totweight := sum(temp_weightvar)]
+  
+  # This is a ugly eval(parse()) loop but I can't think of a better way to do it...
+  
+  cmdstring = "temp = data[, .(weight = sum(temp_weightvar), totweight = totweight[1]"
+  
+  for(my_meanvar in meanvars) {
+    temp_cmd = paste(", mean_", my_meanvar, " = sum(temp_weightvar * ", my_meanvar, ", na.rm = TRUE) / sum(temp_weightvar, na.rm = TRUE)", sep = "")
+    cmdstring = paste(cmdstring, temp_cmd, sep = "")
+  }
+  
+  cmdstring = paste(cmdstring, "), by = .(temp_byvar, temp_yvar)]", sep = "")
+  
+  eval(parse(text = cmdstring))
+  
+  ##########
+  
   temp[order(temp_byvar, weight, decreasing = TRUE), rank := 1:.N, by = temp_byvar]
   temp[, groupweight := sum(weight), by = temp_byvar]
   
   temp2 = temp[rank <= topn]
-  temp2[, frac := percent(weight / groupweight)]
-  temp2[, totfrac := percent(sum(weight) / groupweight), by = temp_byvar]
-  
   temp2 = temp2[order(temp_byvar, rank)]
+  temp2[, frac := percent(weight / groupweight)]
+  temp2[, totfrac := percent(weight / totweight), by = temp_byvar]
+  temp2[, cum_groupfrac := percent(cumsum(weight) / groupweight), by = temp_byvar]
+  temp2[, group_totfrac := percent(groupweight / totweight), by = temp_byvar]
+  
   temp2[, rank := NULL]
   
-  setcolorder(temp2, c(1,2,6,7,4,3,5))
+  meannames = names(temp2)[which(grepl("mean_", names(temp2)))]
   
-  setnames(temp2, "temp_meanvar", meanvar)
+  setcolorder(temp2, c("temp_byvar", "temp_yvar", "frac", "cum_groupfrac",
+                       "totfrac", "group_totfrac", meannames, "weight", "groupweight", "totweight"))
+  
   setnames(temp2, "temp_byvar", byvar)
-  setnames(temp2, "get", yvar)
+  setnames(temp2, "temp_yvar", yvar)
   
   print(temp2)
   return(temp2)
 }
 
-# setwd("C:/Users/Anthony Lee Zhang/Dropbox/projects/cps/cepr")
+# setwd("E:/acs_2010")
 # rm(list = ls())
+# source("C:/Users/Anthony Lee Zhang/Dropbox/operational/alzRtools/Rtools.R")
 # 
-# load("cepr_march_2015.RData")
-# byvar = "race"
-# yvar = "educ"
-# sumvar = "weight"
-# weightvar = "weight"
-# meanvar = "income"
-# topn = 5
+# load("data_small_clean.RData")
+# 
+# out = datatopn(data, yvar = "race", byvar = "sex", meanvar = c("income", "numage"), weightvar = "perwt")
 
 
 
