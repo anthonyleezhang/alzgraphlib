@@ -1,28 +1,29 @@
-slp = function(plotdata, xname = "x", yname = "y", colname = "", ltyname = "", yzero = 0, factor_color = TRUE) {
+slp = function(plotdata, x, y, color = 1, lty = 1, yzero = 0) {
   
-  if(colname == "") {plotdata[, temp_colvar := 1]}
-  if(colname != "") {plotdata[, temp_colvar := get(colname)]}
+  xname = deparse(substitute(x))
+  yname = deparse(substitute(y))
   
-  if(ltyname == "") {plotdata[, temp_ltyvar := 1]}
-  if(ltyname != "") {plotdata[, temp_ltyvar := get(ltyname)]}
+  plotdata[, temp_x := eval(parse(text = xname))]
+  plotdata[, temp_y := eval(parse(text = yname))]
   
-  if(factor_color == TRUE) {
-    plot = ggplot(plotdata, aes(x = get(xname), y = get(yname), group = factor(paste(temp_colvar, temp_ltyvar)), 
-                                color = factor(temp_colvar), lty = factor(temp_ltyvar))) + 
-      geom_line(size = 1.3, alpha = 0.7) + scale_color_discrete(name = colname)
-  }
+  colname = deparse(substitute(color))
+  plotdata[, temp_colvar := eval(parse(text = colname))]
   
-  if(factor_color == FALSE) {
-    plot = ggplot(plotdata, aes(x = get(xname), y = get(yname), group = factor(paste(temp_colvar, temp_ltyvar)), 
-                                color = as.numeric(temp_colvar), lty = factor(temp_ltyvar))) + 
-      geom_line(size = 1.3, alpha = 0.7) + scale_color_continuous(name = colname)
-  }
+  ltyname = deparse(substitute(lty))
+  plotdata[, temp_ltyvar := eval(parse(text = ltyname))]
   
-  plot = plot + 
+  plot = ggplot(plotdata, aes(x = temp_x, y = temp_y, group = paste(temp_colvar, temp_ltyvar), 
+                              color = temp_colvar, lty = factor(temp_ltyvar))) + 
     geom_line(size = 1.3, alpha = 0.7) + 
     xlab(xname) + 
     theme(text = element_text(size = 40)) + 
     scale_linetype_discrete(name = ltyname)
+  
+  if(class(plotdata$temp_colvar) == "numeric") {
+    plot = plot + scale_color_continuous(name = colname)
+  } else {
+    plot = plot + scale_color_discrete(name = colname)
+  }
   
   if(yzero == 1) {
     plot = plot + scale_y_continuous(name = yname, limits = c(0, plotdata[, max(get(yname))]))
@@ -32,3 +33,7 @@ slp = function(plotdata, xname = "x", yname = "y", colname = "", ltyname = "", y
   
   return(plot)
 }
+
+
+
+

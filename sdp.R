@@ -1,13 +1,16 @@
-sdp = function(plotdata, xname = "x", colname = "", ltyname = "", wname = "", topn = 10, factor_color = TRUE) {
+sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, factor_color = TRUE) {
   
-  if(colname == "") {plotdata[, temp_colvar := 1]}
-  if(colname != "") {plotdata[, temp_colvar := get(colname)]}
+  xname = deparse(substitute(x))
+  plotdata[, temp_x := eval(parse(text = xname))]
   
-  if(ltyname == "") {plotdata[, temp_ltyvar := 1]}
-  if(ltyname != "") {plotdata[, temp_ltyvar := get(ltyname)]}
+  colname = deparse(substitute(color))
+  plotdata[, temp_colvar := eval(parse(text = colname))]
   
-  if(wname == "") {plotdata[, temp_weights := 1]}
-  if(wname != "") {plotdata[, temp_weights := get(wname)]}
+  ltyname = deparse(substitute(lty))
+  plotdata[, temp_ltyvar := eval(parse(text = ltyname))]
+  
+  weightname = deparse(substitute(weights))
+  plotdata[, temp_weights := eval(parse(text = weightname))]
   
   weightdata = plotdata[, .(weight = sum(temp_weights)), by = .(temp_colvar, temp_ltyvar)]
   weightdata[order(weight), rank := 1:.N]
@@ -17,17 +20,14 @@ sdp = function(plotdata, xname = "x", colname = "", ltyname = "", wname = "", to
   
   plotdata[, norm_weights := temp_weights / sum(temp_weights), by = .(temp_colvar, temp_ltyvar)]
   
-  if(factor_color == TRUE) {
-    plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
-                                color = factor(temp_colvar), lty = factor(temp_ltyvar), weights = norm_weights))
-    
-    plot = plot + scale_color_discrete(name = colname)
-  }
   
-  if(factor_color == FALSE) {
-    plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
-                                color = temp_colvar, lty = factor(temp_ltyvar)))
-    plot = plot + scale_color_gradient(low = "blue1", high = "darkorange1")
+  plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
+                              color = temp_colvar, lty = factor(temp_ltyvar), weights = norm_weights))
+  
+  if(class(plotdata$temp_colvar) == "numeric") {
+    plot = plot + scale_color_gradient(name = colname, low = "blue1", high = "darkorange1")
+  } else {
+    plot = plot + scale_color_discrete(name = colname)
   }
   
   plot = plot + 

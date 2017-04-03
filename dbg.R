@@ -1,12 +1,13 @@
-dbg = function(data, yname, byname = "", meannames = character(0), sumnames = character(0), uniquenames = character(0), wname = "", topn = 50) {
+dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames = character(0), uniquenames = character(0), topn = 50) {
   
-  data[, temp_yvar := get(yname)]
+  yname = deparse(substitute(y))
+  data[, temp_yvar := eval(parse(text = yname))]
   
-  if(wname != "") {data[, temp_weightvar := get(wname)]}
-  if(wname == "") {data[, temp_weightvar := 1]}
+  byname = deparse(substitute(by))
+  data[, temp_byvar := eval(parse(text = byname))]
   
-  if(byname != "") {data[, temp_byvar := get(byname)]}
-  if(byname == "") {data[, temp_byvar := 1]}
+  weightname = deparse(substitute(y))
+  data[, temp_weightvar := eval(parse(text = weightname))]
   
   data[, totweight := sum(temp_weightvar)]
   
