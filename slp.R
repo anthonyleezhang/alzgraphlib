@@ -19,8 +19,7 @@ slp = function(plotdata, x, y, color = 1, lty = 1, yzero = 0) {
     theme(text = element_text(size = 40)) + 
     scale_linetype_discrete(name = ltyname)
   
-  if(class(plotdata$temp_colvar) == "numeric") {
-    plot = plot + scale_color_continuous(name = colname)
+  if(class(plotdata$temp_colvar) == "numeric") {plot = plot + scale_color_continuous(name = colname)
   } else {
     plot = plot + scale_color_discrete(name = colname)
   }

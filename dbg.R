@@ -6,7 +6,7 @@ dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames 
   byname = deparse(substitute(by))
   data[, temp_byvar := eval(parse(text = byname))]
   
-  weightname = deparse(substitute(y))
+  weightname = deparse(substitute(weights))
   data[, temp_weightvar := eval(parse(text = weightname))]
   
   data[, totweight := sum(temp_weightvar)]
@@ -53,10 +53,11 @@ dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames 
   temp2[, group_totfrac := percent(groupweight / totweight), by = temp_byvar]
   
   temp2[, rank := NULL]
+  temp2 = temp2[order(groupweight, weight, decreasing = TRUE)]
   
   meannames = names(temp2)[which(grepl("mean_", names(temp2)))]
-  meannames = names(temp2)[which(grepl("sum_", names(temp2)))]
-  meannames = names(temp2)[which(grepl("unique_", names(temp2)))]
+  sumnames = names(temp2)[which(grepl("sum_", names(temp2)))]
+  uniquenames = names(temp2)[which(grepl("unique_", names(temp2)))]
   
   setcolorder(temp2, c("temp_byvar", "temp_yvar", "pctfrac", "pct_cum_groupfrac", 
                        "totfrac", "group_totfrac", meannames, sumnames, uniquenames, "count", "weight", "groupweight", 
@@ -68,3 +69,6 @@ dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames 
   print(temp2)
   return(temp2)
 }
+
+
+
