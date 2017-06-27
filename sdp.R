@@ -1,4 +1,6 @@
-sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, factor_color = TRUE) {
+sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize = 200000, factor_color = TRUE) {
+  
+  if(plotdata[, .N] > maxsize) {plotdata = plotdata[sample(1:.N, maxsize)]}
   
   xname = deparse(substitute(x))
   plotdata[, temp_x := eval(parse(text = xname))]
@@ -21,7 +23,7 @@ sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, factor_c
   plotdata[, norm_weights := temp_weights / sum(temp_weights), by = .(temp_colvar, temp_ltyvar)]
   
   
-  plot = ggplot(plotdata, aes(x = get(xname), group = factor(paste(temp_colvar, temp_ltyvar)), 
+  plot = ggplot(plotdata, aes(x = temp_x, group = factor(paste(temp_colvar, temp_ltyvar)), 
                               color = temp_colvar, lty = factor(temp_ltyvar), weights = norm_weights))
   
   if(class(plotdata$temp_colvar) == "numeric") {
