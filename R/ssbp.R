@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+ 
 # Stacked bar chart
 
 ssbp = function(plotdata, x, y, color = 1) {

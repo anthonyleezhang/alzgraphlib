@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 slp = function(plotdata, x, y, color = 1, lty = 1, yzero = 0) {
   
   xname = deparse(substitute(x))

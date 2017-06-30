@@ -1,0 +1,13 @@
+Package: alzRtools
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("Anthony Lee", "Zhang", email = "anthonyzhang0@gmail.com", role = c("aut", "cre"))
+Description: Descriptive data analysis library
+Depends: R (>= 3.2.2),
+	data.table,
+	ggplot2
+License: 
+Encoding: UTF-8
+LazyData: true
+Imports: data.table
+RoxygenNote: 6.0.1

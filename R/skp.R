@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 skp = function(plotdata, x, y, size = 1, yzero = 0, jitter = NA) {
   
   xname = deparse(substitute(x))

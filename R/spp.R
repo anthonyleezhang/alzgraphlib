@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 # Proportions plot
 
 spp = function(data, x, color) {

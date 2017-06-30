@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 # Quantiles kernel plot
 
 qqp = function(plotdata, x, y) {

@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize = 200000, factor_color = TRUE) {
   
   if(plotdata[, .N] > maxsize) {plotdata = plotdata[sample(1:.N, maxsize)]}

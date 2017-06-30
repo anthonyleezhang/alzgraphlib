@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 sbp = function(plotdata, x, color = 1, weights = 1) {
   
   xname = deparse(substitute(x))

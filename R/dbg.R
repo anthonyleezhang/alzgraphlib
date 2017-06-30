@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames = character(0), uniquenames = character(0), topn = 50) {
   
   yname = deparse(substitute(y))
