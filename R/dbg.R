@@ -11,8 +11,9 @@ dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames 
   
   weightname = deparse(substitute(weights))
   data[, temp_weightvar := eval(parse(text = weightname))]
+  data[is.na(temp_weightvar), temp_weightvar := 0]
   
-  data[, totweight := sum(temp_weightvar)]
+  data[, totweight := sum(temp_weightvar, na.rm = TRUE)]
   
   # This is a ugly eval(parse()) loop but I can't think of a better way to do it...
   
@@ -69,7 +70,6 @@ dbg = function(data, y, by = 1, weights = 1, meannames = character(0), sumnames 
   setnames(temp2, "temp_byvar", byname)
   setnames(temp2, "temp_yvar", yname)
   
-  print(temp2)
   return(temp2)
 }
 

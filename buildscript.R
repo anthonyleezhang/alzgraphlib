@@ -1,5 +1,5 @@
 
-setwd("E:/Dropbox/alzRtools")
+setwd("E:/Dropbox/alzgraphlib")
 library(devtools)
 
 document()

@@ -1,13 +1,12 @@
-Package: alzRtools
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
+Package: alzgraphlib
+Title: Descriptive data analysis library
+Version: 0.1
 Authors@R: person("Anthony Lee", "Zhang", email = "anthonyzhang0@gmail.com", role = c("aut", "cre"))
-Description: Descriptive data analysis library
-Depends: R (>= 3.2.2),
-	data.table,
-	ggplot2
+Description: Descriptive data analysis library for R, written by Anthony Lee Zhang
+Depends: R (>= 3.2.2)
 License: 
 Encoding: UTF-8
 LazyData: true
-Imports: data.table
+Imports: data.table,
+	ggplot2
 RoxygenNote: 6.0.1
