@@ -1,7 +1,7 @@
 #' @export
 #' @import data.table
 
-sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize = 200000, factor_color = TRUE) {
+sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize = 200000) {
   
   if(plotdata[, .N] > maxsize) {plotdata = plotdata[sample(1:.N, maxsize)]}
   
@@ -32,7 +32,7 @@ sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize 
   if(class(plotdata$temp_colvar) == "numeric") {
     plot = plot + scale_color_gradient(name = colname, low = "blue1", high = "darkorange1")
   } else {
-    plot = plot + scale_color_discrete(name = colname)
+    plot = plot + scale_color_gdocs(name = colname)
   }
   
   plot = plot + 
@@ -44,3 +44,5 @@ sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize 
   
   return(plot)
 }
+
+

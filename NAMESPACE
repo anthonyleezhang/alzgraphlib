@@ -2,6 +2,7 @@
 
 export(d)
 export(dbg)
+export(makeranks)
 export(p)
 export(pr)
 export(qqp)

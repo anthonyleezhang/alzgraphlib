@@ -24,7 +24,7 @@ slp = function(plotdata, x, y, color = 1, lty = 1, yzero = 0) {
   
   if(class(plotdata$temp_colvar) %in% c("numeric", "integer")) {plot = plot + scale_color_gradient(name = colname, low = "blue1", high = "darkorange1")
   } else {
-    plot = plot + scale_color_discrete(name = colname)
+    plot = plot + scale_color_gdocs(name = colname)
   }
   
   if(yzero == 1) {
