@@ -1,7 +1,7 @@
 #' @export
 #' @import data.table
 
-skp = function(plotdata, x, y, size = 1, yzero = 0, jitter = NA) {
+skp = function(plotdata, x, y, label = 1, size = 1, yzero = 0, jitter = NA) {
   
   xname = deparse(substitute(x))
   plotdata[, temp_x := eval(parse(text = xname))]
@@ -12,16 +12,23 @@ skp = function(plotdata, x, y, size = 1, yzero = 0, jitter = NA) {
   sizename = deparse(substitute(size))
   plotdata[, temp_size := eval(parse(text = sizename))]
   
+  labelname = deparse(substitute(label))
+  plotdata[, temp_label := as.character(eval(parse(text = labelname)))]
+  
   if(dim(plotdata)[1] > 10000) {small_plotdata = plotdata[sample(1:.N, 10000)]}
   else {small_plotdata = plotdata}
   
   if(yzero == 1) {yscale = scale_y_continuous(name = yname, limits = c(0, plotdata[, max(y)]))}
   else {yscale = scale_y_continuous(name = yname)}
   
-  plot = ggplot(small_plotdata, aes(x = temp_x, y = temp_y, size = temp_size))
+  plot = ggplot(small_plotdata, aes(x = temp_x, y = temp_y, size = temp_size, label = temp_label))
   
-  if(is.na(jitter)) {plot = plot + geom_point()}
-  else {plot = plot + geom_jitter(width = jitter[1], height = jitter[2])}
+  if(labelname == 1) {
+    if(is.na(jitter)) {plot = plot + geom_point()}
+    else {plot = plot + geom_jitter(width = jitter[1], height = jitter[2])}
+  } else {
+    plot = plot + geom_text()
+  }
   
   plot = plot + geom_smooth(size = 1.3, data = plotdata) + 
     xlab(xname) +

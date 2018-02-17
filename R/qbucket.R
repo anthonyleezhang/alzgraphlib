@@ -1,3 +1,6 @@
+#' @export
+#' @import data.table
+
 qbucket = function(x, n) {
   rankvec = rank(x)
   outvec = ceiling(rankvec / length(x) * n)
