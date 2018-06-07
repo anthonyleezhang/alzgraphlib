@@ -3,6 +3,7 @@
 export(d)
 export(dbg)
 export(makeranks)
+export(mslp)
 export(p)
 export(pr)
 export(qbucket)
