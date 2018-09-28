@@ -29,7 +29,7 @@ sdp = function(plotdata, x, color = 1, lty = 1, weights = 1, topn = 10, maxsize 
   plot = ggplot(plotdata, aes(x = temp_x, group = factor(paste(temp_colvar, temp_ltyvar)), 
                               color = temp_colvar, lty = factor(temp_ltyvar), weights = norm_weights))
   
-  if(class(plotdata$temp_colvar) %in% c('integer', 'numeric') {
+  if(class(plotdata$temp_colvar) %in% c('integer', 'numeric')) {
     plot = plot + scale_color_gradient(name = colname, low = "blue1", high = "darkorange1")
   } else {
     plot = plot + scale_color_gdocs(name = colname)
