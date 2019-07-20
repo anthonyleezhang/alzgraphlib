@@ -2,6 +2,7 @@
 
 export(d)
 export(dbg)
+export(fslp)
 export(makeranks)
 export(mslp)
 export(p)
@@ -14,4 +15,5 @@ export(skp)
 export(slp)
 export(spp)
 export(ssbp)
+export(wmean)
 import(data.table)
